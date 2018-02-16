@@ -103,3 +103,19 @@ test('circular', function (t) {
 
   t.deepEqual(require('./node_modules/circular'), { foo: 1 })
 })
+
+test('multiple concurrent hooks', function (t) {
+  t.plan(2)
+
+  hook(['v8'], function (exports, name, basedir) {
+    exports.foo = 'v8'
+    return exports
+  })
+  hook(['vm'], function (exports, name, basedir) {
+    exports.foo = 'vm'
+    return exports
+  })
+
+  t.equal(require('vm').foo, 'vm')
+  t.equal(require('v8').foo, 'v8')
+})
